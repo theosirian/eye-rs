@@ -1,15 +1,12 @@
-use std::sync::mpsc;
-use std::thread;
-use std::time::Instant;
+use std::{sync::mpsc, thread, time::Instant};
 
 use eye::colorconvert::Device;
-use eye_hal::format::PixelFormat;
-use eye_hal::traits::{Context as _, Device as _, Stream as _};
-use eye_hal::{Error, ErrorKind, PlatformContext, Result};
-
-use glium::index::PrimitiveType;
-use glium::{glutin, Surface};
-use glium::{implement_vertex, program, uniform};
+use eye_hal::{
+    format::PixelFormat,
+    traits::{Context as _, Device as _, Stream as _},
+    Error, ErrorKind, PlatformContext, Result,
+};
+use glium::{glutin, implement_vertex, index::PrimitiveType, program, uniform, Surface};
 
 fn main() -> Result<()> {
     // Create a context
@@ -25,8 +22,11 @@ fn main() -> Result<()> {
     // Create a list of valid capture devices in the system.
     let dev_descrs = ctx.devices()?;
 
+    let args: Vec<String> = std::env::args().collect();
+    let index = args[1].parse::<usize>().unwrap();
+
     // Print the supported formats for each device.
-    let dev = ctx.open_device(&dev_descrs[0].uri)?;
+    let dev = ctx.open_device(&dev_descrs[index].uri)?;
     let dev = Device::new(dev)?;
     let stream_descr = dev
         .streams()?
